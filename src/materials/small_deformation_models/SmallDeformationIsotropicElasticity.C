@@ -80,6 +80,10 @@ SmallDeformationIsotropicElasticity::computeStressNoDecomposition(const ADRankTw
   _psie[_qp] = _g[_qp] * _psie_active[_qp];
   _dpsie_dd[_qp] = _dg_dd[_qp] * _psie_active[_qp];
 
+  // _console << "I1_strain: " << strain.trace().value() << std::endl;
+  // _console << "strain_dev: " << raw_value(strain.deviatoric()) << std::endl;
+  // _console << "stress_intact: " << raw_value(stress_intact) << std::endl;
+  // _console << "psie_active: " << raw_value(_psie_active[_qp]) << std::endl;
   return stress;
 }
 

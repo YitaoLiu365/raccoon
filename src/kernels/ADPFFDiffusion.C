@@ -37,5 +37,6 @@ ADPFFDiffusion::computeQpResidual()
 {
   ADReal value = _grad_test[_i][_qp] * _grad_u[_qp];
 
+
   return 2 * _Gc[_qp] * _l[_qp] / _c0[_qp] * value;
 }

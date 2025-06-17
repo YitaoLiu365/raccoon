@@ -48,10 +48,25 @@ CrackGeometricFunction::CrackGeometricFunction(const InputParameters & parameter
     _tolerance(getParam<Real>("tolerance")),
     _max_its(getParam<unsigned int>("maximum_iterations"))
 {
+  const auto original_enable_jit = _enable_jit;
+  const auto original_enable_ad_cache = _enable_ad_cache;
+  const auto original_enable_auto_optimize = _enable_auto_optimize;
+  const auto original_disable_fpoptimizer = _disable_fpoptimizer;
+
+  _enable_jit = false;
+  _enable_ad_cache = false;
+  _enable_auto_optimize = false;
+  _disable_fpoptimizer = true;
+
   // set d to 0 and evaluate the first derivative of the crack geometric function
   _func_params[_d_idx] = 0;
   _xi_0 = evaluate(_derivatives[0]._F, _name);
   _c0_0 = computeNormalizationConstant();
+
+  _enable_jit = original_enable_jit;
+  _enable_ad_cache = original_enable_ad_cache;
+  _enable_auto_optimize = original_enable_auto_optimize;
+  _disable_fpoptimizer = original_disable_fpoptimizer;
 }
 
 ADReal
