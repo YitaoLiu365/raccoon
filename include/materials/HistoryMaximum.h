@@ -11,6 +11,7 @@ public:
   HistoryMaximum(const InputParameters & parameters);
 
 protected:
+  virtual void initQpStatefulProperties() override;
   void computeQpProperties() override;
 
   ADMaterialProperty<Real> & _hist_max;

@@ -26,6 +26,12 @@ HistoryMaximum::HistoryMaximum(const InputParameters & parameters)
 }
 
 void
+HistoryMaximum::initQpStatefulProperties()
+{
+  _hist_max[_qp] = 0.0;
+}
+
+void
 HistoryMaximum::computeQpProperties()
 {
   if (_t_step == 0)
@@ -35,7 +41,7 @@ HistoryMaximum::computeQpProperties()
     // _hist_max[_qp] = _prop[_qp];
     // _console << "psie_active: " << raw_value(_prop[_qp]) << std::endl;
     // _console << "psie_active threshold: " << raw_value(_minimum[_qp]) << std::endl;
-    _console << "history_max: " << raw_value(_hist_max[_qp]) << std::endl;
+    // _console << "history_max: " << raw_value(_hist_max[_qp]) << std::endl;
     return;
   }
 
@@ -43,5 +49,4 @@ HistoryMaximum::computeQpProperties()
   _hist_max[_qp] = std::max(_hist_max_old[_qp], _prop[_qp]);
   // Ensure it does not go below the minimum
   _hist_max[_qp] = std::max(_hist_max[_qp], _minimum[_qp]);
-  // _hist_max[_qp] = _prop[_qp];
 }
