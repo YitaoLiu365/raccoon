@@ -2,6 +2,24 @@
 //* being developed at Dolbow lab at Duke University
 //* http://dolbow.pratt.duke.edu
 
+// MOOSE includes
+#include "Assembly.h"
+#include "ExplicitMixedOrder.h"
+#include "MeshChangedInterface.h"
+#include "Moose.h"
+#include "MooseError.h"
+#include "MooseTypes.h"
+#include "MooseVariableFieldBase.h"
+#include "NonlinearSystem.h"
+
+// libMesh includes
+#include "TransientBase.h"
+#include "libmesh/nonlinear_solver.h"
+#include "libmesh/sparse_matrix.h"
+#include <algorithm>
+#include <iterator>
+#include <utility>
+
 #include "InputParameters.h"
 #include "PFFExplicitMixedOrder.h"
 
