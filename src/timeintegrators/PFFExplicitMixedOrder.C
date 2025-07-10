@@ -78,18 +78,28 @@ void
 PFFExplicitMixedOrder::upperboundCheck()
 {
   auto & nlSol = *_nonlinear_implicit_system->solution;
+  auto & nlSolOld = _nl->solutionOld();
   auto nlSol_d = nlSol.get_subvector(_local_d_indices);
+  auto nlSolOld_d = nlSolOld.get_subvector(_local_d_indices);
+  auto vel = _sys.solutionUDot();
+  auto v_d = vel->get_subvector(_local_d_indices);
   for (auto i = nlSol_d->first_local_index(); i < nlSol_d->last_local_index(); ++i)
   {
     if ((*nlSol_d)(i) > 1.0)
+    {
       nlSol_d->set(i, 1.0);
+      v_d->set(i, (1 - (*nlSolOld_d)(i)) / _dt);
+    }
   }
   nlSol.restore_subvector(std::move(nlSol_d), _local_d_indices);
+  vel->restore_subvector(std::move(v_d), _local_d_indices);
   nlSol.close();
+  vel->close();
 }
 
 void
-PFFExplicitMixedOrder::irreversibilityCheck(NumericVector<Number> *accel, NumericVector<Number> *vel)
+PFFExplicitMixedOrder::irreversibilityCheck(NumericVector<Number> * accel,
+                                            NumericVector<Number> * vel)
 {
   auto accel_d = accel->get_subvector(_local_d_indices);
   auto vel_d = vel->get_subvector(_local_d_indices);
