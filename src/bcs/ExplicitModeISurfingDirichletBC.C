@@ -20,6 +20,9 @@ ExplicitModeISurfingDirichletBC::validParams()
       "and for $t \\in [1, \\infty)$, the crack tip advances to the right with a velocity of v");
   params.addParam<Point>(
       "initial_crack_tip_position", RealVectorValue(0, 0, 0), "Initial crack tip position");
+  params.addParam<Real>("crack_propagation_starting_time",
+                        0,
+                        "The expecting time when the crack starts to propagate");
   params.addParam<RealVectorValue>("crack_propagation_velocity",
                                    RealVectorValue(1, 0, 0),
                                    "Velocity of the crack tip, crack starts to propagate at t = 1");
@@ -33,6 +36,7 @@ ExplicitModeISurfingDirichletBC::validParams()
 ExplicitModeISurfingDirichletBC::ExplicitModeISurfingDirichletBC(const InputParameters & parameters)
   : ExplicitDirichletBCBase(parameters),
     _c(getParam<Point>("initial_crack_tip_position")),
+    _tc(getParam<Real>("crack_propagation_starting_time")),
     _v(getParam<RealVectorValue>("crack_propagation_velocity")),
     _component(getParam<unsigned int>("component")),
     _Gc(getParam<Real>("Gc")),
@@ -49,14 +53,14 @@ ExplicitModeISurfingDirichletBC::computeQpValue()
   Real Kolosov = (3 - 4 * nu);
 
   Point c = _c;
-  if (_t > 2e-3)
-    c += _v * (_t - 2e-3);
+  if (_t > _tc)
+    c += _v * (_t - _tc);
   Real x = (*_current_node)(0) - c(0);
   Real y = (*_current_node)(1) - c(1);
   Real theta = std::atan2(y, x);
   Real r = std::sqrt(x * x + y * y);
   Real K1 = std::sqrt(E * _Gc / (1 - nu * nu));
-  K1 *= _t < 2e-3 ? _t / (2e-3) : 1;
+  K1 *= _t < _tc ? _t / _tc : 1;
 
   Real u = K1 / 2 / _G * std::sqrt(r / 2 / M_PI) * (Kolosov - std::cos(theta));
   if (_component == 0)
@@ -64,8 +68,5 @@ ExplicitModeISurfingDirichletBC::computeQpValue()
   if (_component == 1)
     u *= std::sin(theta / 2);
 
-  _console << "K1: " << K1 << "; G: " << _G << "; r: " << r << "; k: " << Kolosov
-           << "; theta: " << theta << std::endl;
-  _console << "direction: " << _component << "; u: " << u << std::endl;
   return u;
 }

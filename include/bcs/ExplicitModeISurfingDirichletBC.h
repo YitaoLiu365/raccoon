@@ -18,6 +18,7 @@ protected:
   virtual Real computeQpValue() override;
 
   const Point & _c;
+  const Real _tc;
   const RealVectorValue & _v;
   const unsigned int _component;
   const Real _Gc;
