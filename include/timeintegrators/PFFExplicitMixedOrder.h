@@ -12,17 +12,18 @@ public:
   static InputParameters validParams();
   PFFExplicitMixedOrder(const InputParameters & parameters);
 
-  virtual void init() override {ExplicitMixedOrder::init();}
-  virtual void solve() override {ExplicitMixedOrder::solve();}
+  virtual void init() override { ExplicitMixedOrder::init(); }
+  virtual void solve() override { ExplicitMixedOrder::solve(); }
 
 protected:
   /// Calculate acceleration and velocity using the central difference method
-  virtual void centralDifference() override {ExplicitMixedOrder::centralDifference();}
+  virtual void discretize() override { ExplicitMixedOrder::discretize(); }
 
   /// Helper functions of phase-field
   virtual void initPF() override;
   virtual void upperboundCheck() override;
-  virtual void irreversibilityCheck(NumericVector<Number> *accel, NumericVector<Number> *vel) override;
+  virtual void irreversibilityCheck(NumericVector<Number> * accel,
+                                    NumericVector<Number> * vel) override;
 
   /// Variables for phase-field
   std::unordered_set<unsigned int> & _vars_d;
