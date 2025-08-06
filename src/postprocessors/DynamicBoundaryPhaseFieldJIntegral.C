@@ -15,15 +15,15 @@ DynamicBoundaryPhaseFieldJIntegral::validParams()
   InputParameters params = PhaseFieldJIntegral::validParams();
   params.addClassDescription("Compute the boundary integration part of the dynamic J integral for "
                              "a phase-field model of fracture ");
-  params.addParam<MaterialPropertyName>(
-      "density", 1, "The material property defining the density of the material");
+  params.addRequiredParam<MaterialPropertyName>(
+      "density", "The material property defining the density of the material");
   return params;
 }
 
 DynamicBoundaryPhaseFieldJIntegral::DynamicBoundaryPhaseFieldJIntegral(
     const InputParameters & parameters)
   : PhaseFieldJIntegral(parameters),
-    _density(getADMaterialPropertyByName<Real>("density")),
+    _density(getADMaterialProperty<Real>("density")),
     _disp_dot(coupledDots("displacements"))
 {
   // set unused dimensions to zero

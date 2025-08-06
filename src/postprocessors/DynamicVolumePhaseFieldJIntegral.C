@@ -18,8 +18,8 @@ DynamicVolumePhaseFieldJIntegral::validParams()
   params.addClassDescription("Compute the volume integration part of the dynamic J integral for a "
                              "phase-field model of fracture");
   params.addRequiredParam<RealVectorValue>("J_direction", "direction of J integral");
-  params.addParam<MaterialPropertyName>(
-      "density", 1, "The material property defining the density of the material");
+  params.addRequiredParam<MaterialPropertyName>(
+      "density", "The material property defining the density of the material");
   params.addRequiredCoupledVar(
       "displacements",
       "The displacements appropriate for the simulation geometry and coordinate system");
@@ -30,7 +30,7 @@ DynamicVolumePhaseFieldJIntegral::DynamicVolumePhaseFieldJIntegral(
     const InputParameters & parameters)
   : ElementIntegralPostprocessor(parameters),
     BaseNameInterface(parameters),
-    _density(getADMaterialPropertyByName<Real>("density")),
+    _density(getADMaterialProperty<Real>("density")),
     _ndisp(coupledComponents("displacements")),
     _t(getParam<RealVectorValue>("J_direction")),
     _disp_dotdot(coupledDotDots("displacements")),
@@ -58,7 +58,7 @@ DynamicVolumePhaseFieldJIntegral::computeQpIntegral()
   auto psi_k = _density[_qp] * H1.transpose() * A;
 
   // Inertial part
-  RealVectorValue V = ((*_disp_dot[0])[_qp], (*_disp_dot[1])[_qp], (*_disp_dot[2])[_qp]);
+  RealVectorValue V((*_disp_dot[0])[_qp], (*_disp_dot[1])[_qp], (*_disp_dot[2])[_qp]);
   auto H2 = RankTwoTensor::initializeFromRows(
       (*_grad_disp_dot[0])[_qp], (*_grad_disp_dot[1])[_qp], (*_grad_disp_dot[2])[_qp]);
   auto psi_i = _density[_qp] * H2.transpose() * V;
