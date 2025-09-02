@@ -18,7 +18,7 @@ public:
   virtual ADRankTwoTensor computeStress(const ADRankTwoTensor & strain) override;
 
 protected:
-// private:
+  // private:
   // @{ Decomposition methods
   virtual ADRankTwoTensor computeStressNoDecomposition(const ADRankTwoTensor & strain);
   virtual ADRankTwoTensor computeStressSpectralDecomposition(const ADRankTwoTensor & strain);

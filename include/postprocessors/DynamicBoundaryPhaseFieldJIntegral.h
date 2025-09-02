@@ -18,4 +18,7 @@ protected:
 
   const ADMaterialProperty<Real> & _density;
   std::vector<const VariableValue *> _disp_dot;
+
+  const MaterialPropertyName _g_name;
+  const ADMaterialProperty<Real> & _g;
 };

@@ -17,6 +17,7 @@ DynamicBoundaryPhaseFieldJIntegral::validParams()
                              "a phase-field model of fracture ");
   params.addRequiredParam<MaterialPropertyName>(
       "density", "The material property defining the density of the material");
+  params.addParam<MaterialPropertyName>("degradation_function", "g", "The degradation function");
   return params;
 }
 
@@ -24,7 +25,9 @@ DynamicBoundaryPhaseFieldJIntegral::DynamicBoundaryPhaseFieldJIntegral(
     const InputParameters & parameters)
   : PhaseFieldJIntegral(parameters),
     _density(getADMaterialProperty<Real>("density")),
-    _disp_dot(coupledDots("displacements"))
+    _disp_dot(coupledDots("displacements")),
+    _g_name(prependBaseName("degradation_function", true)),
+    _g(getADMaterialProperty<Real>(_g_name))
 {
   // set unused dimensions to zero
   for (unsigned i = _ndisp; i < 3; ++i)
@@ -43,7 +46,7 @@ DynamicBoundaryPhaseFieldJIntegral::computeQpIntegral()
   auto H = RankTwoTensor::initializeFromRows(
       (*_grad_disp[0])[_qp], (*_grad_disp[1])[_qp], (*_grad_disp[2])[_qp]);
   RankTwoTensor I2(RankTwoTensor::initIdentity);
-  ADRankTwoTensor Sigma = (_psie[_qp] + psik) * I2 - H.transpose() * _stress[_qp];
+  ADRankTwoTensor Sigma = (_psie[_qp] + _g[_qp] * psik) * I2 - H.transpose() * _stress[_qp];
   RealVectorValue n = _normals[_qp];
 
   // Include the dynamic term
